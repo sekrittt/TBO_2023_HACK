@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackatonchik</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #upload-file {
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 18px;
+            background-color: #eeeeee;
+            box-shadow: 0px 2px 4px 0px black;
+            border: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #upload-file:hover {
+            background-color: #e3e3e3;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Upload for detect objects</h3>
+    <button id="upload-file">Upload file</button>
+    <script>
+        let el = document.getElementById("upload-file")
+        let fi = document.createElement("input")
+        fi.type = "file"
+        fi.accept = "image/png"
+        el.addEventListener('click', () => {
+            fi.click()
+        })
+        fi.addEventListener('change', async () => {
+            if (fi.files.length > 0) {
+                let fd = new FormData()
+                fd.append('file', fi.files[0], fi.files[0].name)
+                console.log(await (await fetch('/', { method: "post", body: fd })).text())
+            }
+        })
+    </script>
+</body>
+
+</html>

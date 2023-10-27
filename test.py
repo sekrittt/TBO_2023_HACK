@@ -26,7 +26,9 @@
 import os
 
 
-current_dir = os.path.dirname(os.path.realpath(__file__))
+# current_dir = os.path.dirname(os.path.realpath(__file__))
 
-with open(f"{current_dir}/dataset/video0/frames_output/0000.txt", 'r', encoding="utf-8") as f:
-    print([int(i.strip()) for i in f])
+# with open(f"{current_dir}/dataset/video0/frames_output/0000.txt", 'r', encoding="utf-8") as f:
+#     print([int(i.strip()) for i in f])
+
+print(os.getcwd())

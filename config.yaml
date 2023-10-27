@@ -1,0 +1,9 @@
+path: #здесь путь до корня
+train: ./data/images/train #обучение
+val: ./data/images/train #тест(вроде)
+
+names:
+  0: wood
+  1: glass
+  2: plastic
+  3: metal
