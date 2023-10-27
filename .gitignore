@@ -159,5 +159,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-train_dataset_dataset.zip
-train_dataset_dataset/
+dataset/
+.vscode/
