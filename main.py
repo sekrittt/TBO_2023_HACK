@@ -46,6 +46,12 @@ class App:
                     differences["plastic"] += n_differences["plastic"]
                     differences["metal"] += n_differences["metal"]
                     differences["wood"] += n_differences["wood"]
+                if i == len(results)-1:
+                    n_d = BC.find_all(frame)
+                    differences["glass"] += n_d["glass"]
+                    differences["plastic"] += n_d["plastic"]
+                    differences["metal"] += n_d["metal"]
+                    differences["wood"] += n_d["wood"]
 
                 # For CSV
                 res_classes = {**{k: 0 for k in classes}, **
