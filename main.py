@@ -50,7 +50,7 @@ class App:
                 # For CSV
                 res_classes = {**{k: 0 for k in classes}, **
                                dict(Counter([classes[int(i)] for i in result.boxes.cls]))}
-                file_result += f'\n{img.replace(".png", "")[7:]},{res_classes["wood"]},{res_classes["glass"]},{res_classes["plastic"]},{res_classes["metal"]}'
+                file_result += f'\n{img.replace(".png", "")[7:]},{res_classes["wood"]},{res_classes["glass"]},{res_classes["plastic"]},{res_classes["metals"]}'
                 prev_frame = [*frame]
         pprint(differences)
 
