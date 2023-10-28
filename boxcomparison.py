@@ -27,6 +27,7 @@ def counter(frame_first: list, frame_second: list, delta: float, direction: floa
     for first_number in range(len(frame_first[1])):
         for second_number in range(len(frame_second[1])):
             if find_distance(frame_first[1][first_number], frame_second[1][second_number]) < delta:
+                print(frame_first[0][first_number])
                 break
             else:
                 if dir_coord == 'x':
