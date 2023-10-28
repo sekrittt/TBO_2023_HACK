@@ -40,6 +40,11 @@ def counter(frame_first: list, frame_second: list, delta: float, direction: floa
 
     return differences
 
+def find_all(frame: list) -> dict:
+    differences = {"wood": 0, "plastic": 0, "glass": 0, "metal": 0}
+    for item in frame[0]:
+        differences[item]+=1
+    return differences
 
 def find_direction(frame_first: list, frame_second: list, coords_start_x: float = 0, coords_end_x: float = 640,
                    coords_start_y: float = 0, coords_end_y: float = 360) -> tuple[float, str]:
