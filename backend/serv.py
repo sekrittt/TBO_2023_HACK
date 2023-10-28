@@ -1,15 +1,16 @@
-#flask --app serv run
+# flask --app serv run
 
-import os, json
+import os
+import json
 
 from flask import Flask, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 
-def run(host, port):
+def run(host, port, process_image):
     CURRENT_DIR = os.getcwd()
 
-    UPLOAD_FOLDER = os.path.join(CURRENT_DIR,'imgs')
+    UPLOAD_FOLDER = os.path.join(CURRENT_DIR, 'imgs')
     ALLOWED_EXTENSIONS = {'png'}
 
     app = Flask(__name__)
@@ -19,7 +20,8 @@ def run(host, port):
 
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-    def обработка(filename: str) -> str:
+
+    def process(filename: str) -> str:
         # Get sizes of image
         return json.dumps({"success": True, "message": "Upload!"})
 
@@ -30,9 +32,10 @@ def run(host, port):
             file = request.files['file']
             if file and (file.content_type.rsplit('/', 1)[1] in ALLOWED_EXTENSIONS).__bool__():
                 if file.filename is not None:
-                    filename = secure_filename(file.filename) # type: ignore
-                    file.save(os.path.join(UPLOAD_FOLDER,filename))
-                    result = обработка(filename)
+                    filename = secure_filename(file.filename)  # type: ignore
+
+                    file.save(os.path.join(UPLOAD_FOLDER, filename))
+                    result = process(filename)
                     return result
         return json.dumps({
             "success": False,
@@ -46,6 +49,6 @@ def run(host, port):
     @app.route('/<path:filename>')
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'],
-                                filename)
+                                   filename)
 
     app.run(host=host, port=port)
