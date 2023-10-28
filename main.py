@@ -12,7 +12,7 @@ class App:
         self.current_dir = os.getcwd()
         self.model = Model()
         file_result = 'frame,wood,glass,plastic,metal'
-        classes = ["wood", "glass", "plastic", "metals"]
+        classes = ["wood", "glass", "plastic", "metal"]
         if args.train:
             self.model.train(100, self.current_dir)
         else:
@@ -22,7 +22,7 @@ class App:
             [os.path.join(args.input, img) for img in os.listdir(args.input)]), os.listdir(args.input))]
 
         prev_frame = []
-        differences = {"wood": 0, "plastic": 0, "glass": 0, "metals": 0}
+        differences = {"wood": 0, "plastic": 0, "glass": 0, "metal": 0}
         delta, direction, coord = 0, 0, ''
         calced_consts = False
         for i, [result, img] in enumerate(results):
@@ -44,13 +44,13 @@ class App:
                         prev_frame, frame, delta, direction, coord)
                     differences["glass"] += n_differences["glass"]
                     differences["plastic"] += n_differences["plastic"]
-                    differences["metals"] += n_differences["metals"]
+                    differences["metal"] += n_differences["metal"]
                     differences["wood"] += n_differences["wood"]
 
                 # For CSV
                 res_classes = {**{k: 0 for k in classes}, **
                                dict(Counter([classes[int(i)] for i in result.boxes.cls]))}
-                file_result += f'\n{img.replace(".png", "")[7:]},{res_classes["wood"]},{res_classes["glass"]},{res_classes["plastic"]},{res_classes["metals"]}'
+                file_result += f'\n{img.replace(".png", "")[7:]},{res_classes["wood"]},{res_classes["glass"]},{res_classes["plastic"]},{res_classes["metal"]}'
                 prev_frame = [*frame]
         pprint(differences)
 
