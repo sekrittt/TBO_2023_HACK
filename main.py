@@ -6,10 +6,6 @@ from collections import Counter
 import boxcomparison as BC
 
 from pprint import pprint
-import torch
-torch.cuda.empty_cache()
-torch.cuda.memory_summary(device=None, abbreviated=False)
-
 
 class App:
     def __init__(self, args: Namespace):
