@@ -63,17 +63,6 @@ def find_direction(frame_first: list, frame_second: list, coords_start_x: float 
         coord = "y"
     return direction, coord
 
-
-delta = find_delta([[], [[100, 100]]], [[], [[200, 100]]])
-
-direction, coord = find_direction([[], [[100, 100]]], [[], [[200, 100]]])
-
-first_frame = [["wood", "plastic", "glass", "metal"], [
-    [100, 200, 200, 200], [50, 100, 60, 100], [40, 30, 50, 30], [630, 80, 635, 80]]]
-second_frame = [["wood", "plastic", "glass"], [
-    [100, 200, 200, 200], [50, 100, 60, 100], [40, 30, 50, 30]]]
-
-print(counter(first_frame, second_frame, delta, direction, coord))
 # Сначала вызвать find_delta и передать ей первый и второй фрейм, она вернет расстояние, которое проходит объект за фрейм
 # можешь в цикле там пройтись, чтобы побольше значний получить и поделить их на кол-во(опционально)
 # delta = find_delta()
