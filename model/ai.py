@@ -7,7 +7,7 @@ import shutil
 
 class Model:
     def __init__(self, device='cuda') -> None:
-        self.model = YOLO("yolov8s.yaml")
+        self.model = YOLO("yolov8m.yaml")
         self.model.to(device)
         # self.model.fuse()
         self.device = device
