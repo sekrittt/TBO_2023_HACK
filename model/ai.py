@@ -5,7 +5,7 @@ import os
 
 class Model:
     def __init__(self) -> None:
-        self.model = YOLO("yolov8n.yaml")
+        self.model = YOLO("yolov8s.yaml")
 
     def train(self, epochs, current_dir, auto_save=True):
         print("Model training...")

@@ -51,4 +51,4 @@ def run(host, port, process_image):
         return send_from_directory(app.config['UPLOAD_FOLDER'],
                                    filename)
 
-    app.run(host=host, port=port)
+    app.run(host=host, port=port, debug=True)
