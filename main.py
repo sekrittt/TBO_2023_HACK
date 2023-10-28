@@ -16,7 +16,7 @@ class App:
         if args.train:
             self.model.train(100, self.current_dir)
         else:
-            self.model.load(os.path.join(self.current_dir, 'model.pt'))
+            self.model.load(os.path.join(self.current_dir, 'model-m.pt'))
 
         results = [*zip(self.model.process(
             [os.path.join(args.input, img) for img in os.listdir(args.input)]), os.listdir(args.input))]
