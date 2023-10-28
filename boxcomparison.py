@@ -23,7 +23,7 @@ def find_distance(box_first: list, box_second: list) -> float:
 
 # подсчет отличий(новых объектов) в массиве
 def counter(frame_first: list, frame_second: list, delta: float, direction: float, dir_coord: str) -> dict:
-    differences = {"wood": 0, "plastic": 0, "glass": 0, "metal": 0}
+    differences = {"wood": 0, "plastic": 0, "glass": 0, "metals": 0}
     for first_number in range(len(frame_first[1])):
         for second_number in range(len(frame_second[1])):
             if find_distance(frame_first[1][first_number], frame_second[1][second_number]) < delta:
