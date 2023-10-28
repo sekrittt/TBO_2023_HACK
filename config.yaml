@@ -1,7 +1,6 @@
 path: #здесь путь до корня
 train: ./data/images/train #обучение
-val: ./data/images/train #тест(вроде)
-
+val: ./data/images/val
 names:
   0: wood
   1: glass

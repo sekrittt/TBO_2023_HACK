@@ -1,9 +1,7 @@
-import os, sys
-
-
+import os
+import sys
 from backend.serv import run as run_serv
 from model.ai import Model
-
 
 
 class App:
@@ -12,11 +10,11 @@ class App:
         self.current_dir = os.getcwd()
         self.model = Model()
         if '--train' in sys.argv:
-            self.model.train(40, self.current_dir)
+            self.model.train(600, self.current_dir)
         else:
             self.model.load(os.path.join(self.current_dir, 'best.pt'))
-        run_serv('0.0.0.0', 8000, self.model.process)
-
+        run_serv('0.0.0.0', 8000, self.model.process,
+                 not ('--train' in sys.argv))
 
 
 if __name__ == "__main__":

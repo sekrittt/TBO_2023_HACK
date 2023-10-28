@@ -2,6 +2,7 @@
 
 import os
 import json
+from pprint import pprint
 
 from flask import Flask, request, send_from_directory
 from werkzeug.utils import secure_filename
@@ -11,7 +12,17 @@ from ultralytics.engine.results import Results
 from collections import Counter
 
 
-def run(host, port, process_image):
+def counter(arr_first: set, arr_second: set, counted: int) -> int:
+
+    # for box_first in arr_first:
+    #     for box_second in arr_second:
+
+    # return counted
+    pprint(arr_first)
+    return 0
+
+
+def run(host, port, process_image, debug=False):
     CURRENT_DIR = os.getcwd()
 
     UPLOAD_FOLDER = os.path.join(CURRENT_DIR, 'imgs')
@@ -31,8 +42,10 @@ def run(host, port, process_image):
         # Get sizes of image
         image = Image.open(os.path.join(path, filename))
         res: list[Results] = process_image(image)
-        print(Counter([classes[int(i)] for i in res[0].boxes.cls]))
-        return json.dumps({"success": True, "message": "Upload!", "image_url": f'/predict/{filename}'})
+        if res[0].boxes is not None:
+            counter(res[0].boxes, [], 0)  # type: ignore
+            return json.dumps({"success": True, "message": "Upload!", "image_url": f'/predict/{filename}', 'classes': dict(Counter([classes[int(i)] for i in res[0].boxes.cls]))})
+        return json.dumps({"success": False, "message": "Don't have elements"})
 
     @app.route('/', methods=['POST'])
     def upload_file():
@@ -58,11 +71,10 @@ def run(host, port, process_image):
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'],
                                    filename)
-    
-    
+
     @app.route('/predict/<path:filename>')
     def uploaded_file1(filename):
         return send_from_directory(os.path.join(CURRENT_DIR, 'ai', 'predict'),
                                    filename)
 
-    app.run(host=host, port=port, debug=True)
+    app.run(host=host, port=port, debug=debug)
