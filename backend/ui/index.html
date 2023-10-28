@@ -16,7 +16,13 @@
 
         body {
             background-color: #121212;
-            color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            row-gap: 20px;
+            justify-content: center;
+            align-items: center;
+            height: 100dvh;
         }
 
         #upload-file {
@@ -34,12 +40,19 @@
         #upload-file:hover {
             background-color: #303030;
         }
+
+        #processing-block {
+            font-size: 20px;
+            color: white;
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <h3>Upload for detect objects</h3>
     <button id="upload-file">Upload file</button>
+    <div id="processing-block">Processing...</div>
     <script>
         let el = document.getElementById("upload-file")
         let fi = document.createElement("input")
@@ -52,7 +65,15 @@
             if (fi.files.length > 0) {
                 let fd = new FormData()
                 fd.append('file', fi.files[0], fi.files[0].name)
-                console.log(await (await fetch('/', { method: "post", body: fd })).text())
+                document.getElementById("processing-block").style.display = 'block'
+                let response = await (await fetch('/', { method: "post", body: fd })).json()
+                if (response.success) {
+                    let img = document.createElement("img")
+                    img.src = response.image_url
+                    document.body.append(img)
+                    
+                    document.getElementById("processing-block").style.display = 'none'
+                }
             }
         })
     </script>

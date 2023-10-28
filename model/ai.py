@@ -1,7 +1,9 @@
 from ultralytics import YOLO
 import torch
 import os
+from ultralytics.engine.results import Results
 
+import shutil
 
 class Model:
     def __init__(self) -> None:
@@ -17,15 +19,17 @@ class Model:
 
     def save(self, path2save):
         print(f"Model saving...")
-        torch.save(self.model.state_dict(), path2save)
+        self.model.export(format="onnx")
         print(f"Model saved to {path2save}!")
 
-    def process(self, source):
+    def process(self, source) -> list[Results]:
         print("Processing...")
-        result = self.model.predict(source=source)
+        shutil.rmtree(os.path.join(os.getcwd(), 'ai', 'predict'))
+        result = self.model.predict(source=source, save=True, project="ai", save_dir=os.path.join(os.getcwd(), 'results'))
         print("End processing!")
+        return result
 
     def load(self, path2model):
         print(f"Model loading...")
-        self.model.load(weights=path2model)
+        self.model = YOLO(path2model)
         print(f"Model loaded from {path2model}!")
