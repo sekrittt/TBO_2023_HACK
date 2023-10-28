@@ -12,7 +12,7 @@ class App:
         self.current_dir = os.getcwd()
         self.model = Model()
         file_result = 'frame,wood,glass,plastic,metal'
-        classes = ["wood", "glass", "plastic", "metal"]
+        classes = ["wood", "glass", "plastic", "metals"]
         if args.train:
             self.model.train(100, self.current_dir)
         else:
@@ -22,7 +22,7 @@ class App:
             [os.path.join(args.input, img) for img in os.listdir(args.input)]), os.listdir(args.input))]
 
         prev_frame = []
-        differences = {"wood": 0, "plastic": 0, "glass": 0, "metal": 0}
+        differences = {"wood": 0, "plastic": 0, "glass": 0, "metals": 0}
         delta, direction, coord = 0, 0, ''
         calced_consts = False
         for i, [result, img] in enumerate(results):
@@ -44,7 +44,7 @@ class App:
                         prev_frame, frame, delta, direction, coord)
                     differences["glass"] += n_differences["glass"]
                     differences["plastic"] += n_differences["plastic"]
-                    differences["metal"] += n_differences["metal"]
+                    differences["metals"] += n_differences["metals"]
                     differences["wood"] += n_differences["wood"]
 
                 # For CSV
