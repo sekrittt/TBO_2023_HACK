@@ -42,24 +42,18 @@ class App:
             for i, [result, img] in enumerate(results):
                 if result.boxes is not None:
                     frame = [[classes[int(i)] for i in result.boxes.cls], []]
-                    # frame = [["wood","plastic"],
-                    #          [[1,2,3,4],[3,45,5,5]]]
 
                     for b in result.boxes:
                         frame[1].extend([*map(lambda x: [float(h)
                                         for h in x], list(b.xyxy))])
 
-                    # print(result.boxes)
                     if offset+i > 0:
                         find_delta = BC.find_delta(os.path.join(os.getcwd(),
                                                                 args.input, p_img), os.path.join(os.getcwd(), args.input, img))
-                        # print(offset, i, offset+i)
                         delta *= offset+i-1
                         delta = delta+find_delta
                         delta /= offset+i
-                        print(delta)
 
-                    # print(delta)
                     if not calced_consts and i > 0:
 
                         direction, coord = BC.find_direction(prev_frame, frame)
