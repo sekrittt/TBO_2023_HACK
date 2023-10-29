@@ -39,27 +39,11 @@ class App:
             results = [
                 *zip(self.model.process([os.path.join(args.input, img) for img in part]), part)]
 
-<<<<<<< Updated upstream
-                if calced_consts:
-                    n_differences = BC.counter(
-                        prev_frame, frame, delta, direction, coord)
-                    differences["glass"] += n_differences["glass"]
-                    differences["plastic"] += n_differences["plastic"]
-                    differences["metal"] += n_differences["metal"]
-                    differences["wood"] += n_differences["wood"]
-                if i == len(results)-1:
-                    n_d = BC.find_all(frame)
-                    differences["glass"] += n_d["glass"]
-                    differences["plastic"] += n_d["plastic"]
-                    differences["metal"] += n_d["metal"]
-                    differences["wood"] += n_d["wood"]
-=======
             for i, [result, img] in enumerate(results):
                 if result.boxes is not None:
                     frame = [[classes[int(i)] for i in result.boxes.cls], []]
                     # frame = [["wood","plastic"],
                     #          [[1,2,3,4],[3,45,5,5]]]
->>>>>>> Stashed changes
 
                     for b in result.boxes:
                         frame[1].extend([*map(lambda x: [float(h)
