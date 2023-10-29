@@ -1,24 +1,39 @@
-def find_delta(frame_first: list, frame_second: list) -> float:
-    mas = [10**10, 10**10]
-    deltas = []
-    for box_first in frame_first[1]:
-        for box_second in frame_second[1]:
-            mas[0] = min(abs(box_first[0]-box_second[0]), mas[0])  # x
-            mas[1] = min(abs(box_first[1]-box_second[1]), mas[1])  # y
-        deltas.append(mas)
-    sumx, sumy = 0, 0
-    for x, y in deltas:
-        sumx += x
-        sumy += y
-    sumx = sumx/len(deltas)
-    sumy = sumy/len(deltas)
-    return (sumx**2+sumy**2)**0.5*1.1  # погрешность
+import cv2
+import numpy as np
+
+
+def find_delta(p_img, n_img):
+
+    image1 = cv2.imread(p_img)
+    image2 = cv2.imread(n_img)
+
+    if image1 is None or image2 is None:
+        raise Exception("Не удалось загрузить изображения")
+
+    # Преобразование изображений в оттенки серого
+    image1_gray = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+    image2_gray = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+    # Вычисление оптического потока с использованием Lucas-Kanade
+    lk_params = dict(winSize=(15, 15), maxLevel=2, criteria=(
+        cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+    prevPts = cv2.goodFeaturesToTrack(
+        image1_gray, maxCorners=100, qualityLevel=0.3, minDistance=7, blockSize=7)
+    p1, st, err = cv2.calcOpticalFlowPyrLK(
+        image1_gray, image2_gray, prevPts, None, **lk_params)
+
+    if p1 is not None:
+        # Вычисление среднего смещения
+        displacement = np.mean(p1 - prevPts, axis=0)
+        return displacement[0][0]*1.65
+
+    return None
 
 
 # подсчет расстояния между боксами
 def find_distance(box_first: list, box_second: list) -> float:
-    return ((box_first[0]+box_first[2]-box_second[0]-box_second[2])**2 +
-            (box_first[1]+box_first[3]-box_second[1]-box_second[3])**2)**0.5
+    return ((box_first[2]-box_second[0])**2 +
+            (box_first[3]-box_second[1])**2)**0.5
 
 
 # подсчет отличий(новых объектов) в массиве
@@ -30,7 +45,8 @@ def counter(frame_first: list, frame_second: list, delta: float, direction: floa
                 break
             else:
                 if dir_coord == 'x':
-                    if (abs(direction-frame_first[1][first_number][0]) < delta):
+                    # print(frame_first[1][first_number])
+                    if (direction-abs(frame_first[1][first_number][0]) < delta):
                         differences[frame_first[0][first_number]] += 1
                         break
                 else:
@@ -68,15 +84,9 @@ def find_direction(frame_first: list, frame_second: list, coords_start_x: float 
         coord = "y"
     return direction, coord
 
-# Сначала вызвать find_delta и передать ей первый и второй фрейм, она вернет расстояние, которое проходит объект за фрейм
-# можешь в цикле там пройтись, чтобы побольше значний получить и поделить их на кол-во(опционально)
-# delta = find_delta()
 
-# также find_direction() туда такие же параметры
-# direction = find_direction()
-
-# Затем вызвать first_count отдав туда первый фрейм, оно вернет кол-во объектов на фрейме
-
-# Инициализировать переменную counter
-
-# Потом по циклу со второго фрейма вызывать в цикле counter
+def find_all(frame: list) -> dict:
+    differences = {"wood": 0, "plastic": 0, "glass": 0, "metal": 0}
+    for item in frame[0]:
+        differences[item] += 1
+    return differences

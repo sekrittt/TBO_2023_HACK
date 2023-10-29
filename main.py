@@ -7,38 +7,39 @@ import boxcomparison as BC
 
 from pprint import pprint
 
+
+def split_input(inp: list):
+    offset = 0
+    for i in range((len(inp)//100)+1):
+        if offset + 100 <= len(inp):
+            yield offset, inp[offset:offset+100]
+        else:
+            yield offset, inp[offset:]
+        offset += 100
+
+
 class App:
     def __init__(self, args: Namespace):
         self.current_dir = os.getcwd()
         self.model = Model()
-        file_result = 'frame,wood,glass,plastic,metal'
+        file_result = 'frame_id;wood;glass;plastic;metal'
         classes = ["wood", "glass", "plastic", "metal"]
         if args.train:
             self.model.train(100, self.current_dir)
         else:
             self.model.load(os.path.join(self.current_dir, 'model-m.pt'))
 
-        results = [*zip(self.model.process(
-            [os.path.join(args.input, img) for img in os.listdir(args.input)]), os.listdir(args.input))]
-
         prev_frame = []
         differences = {"wood": 0, "plastic": 0, "glass": 0, "metal": 0}
         delta, direction, coord = 0, 0, ''
         calced_consts = False
-        for i, [result, img] in enumerate(results):
-            if result.boxes is not None:
-                frame = []
-                # frame = [["wood","plastic"],
-                #          [[1,2,3,4],[3,45,5,5]]]
-                frame.append([classes[int(i)] for i in result.boxes.cls])
-                frame.extend([[[int(h) for h in list(j)] for j in list(b.xyxy)]
-                             for b in result.boxes])
+        p_img = ''
 
-                if not calced_consts and i > 0:
-                    delta = BC.find_delta(prev_frame, frame)
-                    direction, coord = BC.find_direction(prev_frame, frame)
-                    calced_consts = True
+        for offset, part in split_input(os.listdir(args.input)):
+            results = [
+                *zip(self.model.process([os.path.join(args.input, img) for img in part]), part)]
 
+<<<<<<< Updated upstream
                 if calced_consts:
                     n_differences = BC.counter(
                         prev_frame, frame, delta, direction, coord)
@@ -52,23 +53,60 @@ class App:
                     differences["plastic"] += n_d["plastic"]
                     differences["metal"] += n_d["metal"]
                     differences["wood"] += n_d["wood"]
+=======
+            for i, [result, img] in enumerate(results):
+                if result.boxes is not None:
+                    frame = [[classes[int(i)] for i in result.boxes.cls], []]
+                    # frame = [["wood","plastic"],
+                    #          [[1,2,3,4],[3,45,5,5]]]
+>>>>>>> Stashed changes
 
-                # For CSV
-                res_classes = {**{k: 0 for k in classes}, **
-                               dict(Counter([classes[int(i)] for i in result.boxes.cls]))}
-                file_result += f'\n{img.replace(".png", "")[7:]},{res_classes["wood"]},{res_classes["glass"]},{res_classes["plastic"]},{res_classes["metal"]}'
-                prev_frame = [*frame]
+                    for b in result.boxes:
+                        frame[1].extend([*map(lambda x: [float(h)
+                                        for h in x], list(b.xyxy))])
+
+                    # print(result.boxes)
+                    if offset+i > 0:
+                        find_delta = BC.find_delta(os.path.join(os.getcwd(),
+                                                                args.input, p_img), os.path.join(os.getcwd(), args.input, img))
+                        # print(offset, i, offset+i)
+                        delta *= offset+i-1
+                        delta = delta+find_delta
+                        delta /= offset+i
+                        print(delta)
+
+                    # print(delta)
+                    if not calced_consts and i > 0:
+
+                        direction, coord = BC.find_direction(prev_frame, frame)
+                        calced_consts = True
+
+                    if calced_consts:
+                        n_differences = BC.counter(
+                            prev_frame, frame, delta, direction, coord)
+                        differences["glass"] += n_differences["glass"]
+                        differences["plastic"] += n_differences["plastic"]
+                        differences["metal"] += n_differences["metal"]
+                        differences["wood"] += n_differences["wood"]
+                    if i == len(results)-1:
+                        n_d = BC.find_all(frame)
+                        differences["glass"] += n_d["glass"]
+                        differences["plastic"] += n_d["plastic"]
+                        differences["metal"] += n_d["metal"]
+                        differences["wood"] += n_d["wood"]
+
+                    # For CSV
+                    res_classes = {**{k: 0 for k in classes}, **
+                                   dict(Counter([classes[int(i)] for i in result.boxes.cls]))}
+                    file_result += f'\nf{int(img.replace(".png", ""))};{res_classes["wood"]};{res_classes["glass"]};{res_classes["plastic"]};{res_classes["metal"]}'
+                    prev_frame = frame
+                    p_img = img
         pprint(differences)
+
+        file_result += f'\nf_all;{differences["wood"]};{differences["glass"]};{differences["plastic"]};{differences["metal"]}'
 
         with open(os.path.join(args.output, 'frames.csv'), 'w', encoding="utf-8") as f:
             f.write(file_result)
-
-        # for img in os.listdir(args.input):
-        #     img_pil = Image.open(os.path.join(args.input, img))
-        #     res = self.model.process(img_pil)
-        #     if res[0].boxes is not None:
-        #         counter(res[0].boxes, [], 0)  # type: ignore
-        #         return json.dumps({"success": True, "message": "Upload!", "image_url": f'/predict/{filename}', 'classes': dict(Counter([classes[int(i)] for i in res[0].boxes.cls]))})
 
 
 if __name__ == "__main__":
